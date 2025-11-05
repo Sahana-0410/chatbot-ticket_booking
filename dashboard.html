@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Dashboard</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(120deg, #74ebd5, #ACB6E5);
+    min-height: 100vh;
+  }
+
+  /* ✅ Navbar */
+  nav {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  nav h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .menu {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .menu a:hover {
+    color: #74ebd5;
+  }
+
+  /* ✅ User Icon Dropdown */
+  .user-menu {
+    position: relative;
+    display: inline-block;
+  }
+
+  .user-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: white;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    min-width: 130px;
+    z-index: 200;
+  }
+
+  .dropdown a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+  }
+
+  .dropdown a:hover {
+    background: #f0f0f0;
+  }
+
+  /* ✅ Dashboard container */
+  .dashboard-container {
+    text-align: center;
+    margin-top: 60px;
+  }
+
+  .welcome {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  /* ✅ Cards section */
+  .cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 20px;
+  }
+
+  .card {
+    background: palegoldenrod;
+    width: 240px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+  }
+
+  .card h3 {
+    margin-top: 10px;
+    color: #007bff;
+  }
+
+  .card p {
+    color: #555;
+    font-size: 14px;
+  }
+
+  /* ✅ Responsive for small screens */
+  @media (max-width: 600px) {
+    .cards {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ✅ Navigation bar -->
+<nav>
+  <h2>🌍 WanderWay Dashboard</h2>
+  <div class="menu">
+    <a href="#" id="home">Home</a>
+    <a href="#" id="about">About Us</a>
+    <a href="#" id="help">Help</a>
+
+    <!-- ✅ User Icon with dropdown -->
+    <div class="user-menu">
+      <div class="user-icon" id="userIcon">U</div>
+      <div class="dropdown" id="dropdownMenu">
+        <a href="#" id="profile">Profile</a>
+        <a href="#" id="logout">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ✅ Dashboard Content -->
+<div class="dashboard-container">
+  <p class="welcome">Welcome, <span id="username"></span> 👋</p>
+
+  <div class="cards">
+    <div class="card" id="book-ticket">
+      <img src="book.jpg" alt="Book Ticket">
+      <h3>Book Ticket</h3>
+      <p>Reserve tickets for your favorite destinations.</p>
+    </div>
+
+    <div class="card" id="ChatBot">
+      <img src="chat.jpg" alt="Chat Bot">
+      <h3>Chat Bot</h3>
+      <p>Ask about Tourist Place Details.</p>
+    </div>
+
+    <div class="card" id="feedback">
+      <img src="feedback.png" alt="Feedback">
+      <h3>Give Feedback</h3>
+      <p>Share your travel experience with us.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ✅ Load logged-in user info
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (user) {
+    document.getElementById("username").textContent = user.username;
+    document.getElementById("userIcon").textContent = user.username[0].toUpperCase();
+  } else {
+    window.location.href = "signin.html";
+  }
+
+  // ✅ Dropdown toggle
+  const userIcon = document.getElementById("userIcon");
+  const dropdown = document.getElementById("dropdownMenu");
+  userIcon.onclick = () => {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  };
+  window.onclick = (e) => {
+    if (!userIcon.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = "none";
+    }
+  };
+
+  // ✅ Navigation
+  document.getElementById("book-ticket").onclick = () => window.location.href = "booking.html";
+  document.getElementById("ChatBot").onclick = () => window.location.href = "chat.html";
+  document.getElementById("feedback").onclick = () => window.location.href = "feedback.html";
+
+  // ✅ Logout
+  document.getElementById("logout").onclick = () => {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "signin.html";
+  };
+
+  // ✅ About / Help
+  document.getElementById("about").onclick = () => alert("WanderWay helps you book tourist tickets easily.");
+  document.getElementById("help").onclick = () => alert("For help, contact wanderwaybot@gmail.com");
+</script>
+</body>
+</html>

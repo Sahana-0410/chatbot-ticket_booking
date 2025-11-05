@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | WanderWay</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    color: #333;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 { text-align: center; }
+
+  .filter-section {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  select, input[type="date"] {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+  }
+
+  .charts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  canvas {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+  <h1>📈 WanderWay Admin Dashboard</h1>
+
+  <div class="filter-section">
+    <label for="dateFilter">Select Date: </label>
+    <input type="date" id="dateFilter">
+    <button onclick="fetchStats()">Show Statistics</button>
+  </div>
+
+  <div class="charts">
+    <canvas id="genderChart" width="400" height="300"></canvas>
+    <canvas id="placeChart" width="400" height="300"></canvas>
+  </div>
+
+<script>
+async function fetchStats() {
+  const date = document.getElementById("dateFilter").value;
+  if (!date) return alert("Please select a date.");
+
+  const res = await fetch(`http://localhost:5000/api/stats?date=${date}`);
+  const data = await res.json();
+
+  renderCharts(data.genderStats, data.placeStats);
+}
+
+function renderCharts(genderStats, placeStats) {
+  // Destroy existing charts if needed
+  if (window.genderChartObj) window.genderChartObj.destroy();
+  if (window.placeChartObj) window.placeChartObj.destroy();
+
+  const genderCtx = document.getElementById('genderChart').getContext('2d');
+  window.genderChartObj = new Chart(genderCtx, {
+    type: 'pie',
+    data: {
+      labels: Object.keys(genderStats),
+      datasets: [{
+        label: 'Gender Distribution',
+        data: Object.values(genderStats),
+        backgroundColor: ['#3498db', '#e74c3c', '#9b59b6']
+      }]
+    }
+  });
+
+  const placeCtx = document.getElementById('placeChart').getContext('2d');
+  window.placeChartObj = new Chart(placeCtx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(placeStats),
+      datasets: [{
+        label: 'Bookings per Place',
+        data: Object.values(placeStats),
+        backgroundColor: '#2ecc71'
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+</script>
+</body>
+</html>

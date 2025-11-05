@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign In & Sign Up with ID Proof</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #f4f4f7);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('sign in.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .container {
+    padding: 30px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #000;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: lightseagreen;
+    color: white;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background-color: green;
+  }
+
+  .form-section {
+    width: 100%;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .footer-info {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+  }
+
+  /* Popup styling */
+  .popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .popup-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+  }
+
+  #popup-ok {
+    background: lightseagreen;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  #popup-ok:hover {
+    background: green;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Sign In Section -->
+  <div id="signInSection" class="form-section">
+    <h2>Sign In</h2>
+    <form id="signInForm">
+      <div class="form-group">
+        <label for="signin-username">Username</label>
+        <input type="text" id="signin-username" placeholder="Enter username" required />
+      </div>
+      <div class="form-group">
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" placeholder="Enter password" required />
+      </div>
+      <div class="bottom-buttons">
+        <button type="button" id="toSignUp">Sign Up</button>
+        <button type="submit">Sign In</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Sign Up Section -->
+  <div id="signUpSection" class="form-section hidden">
+    <h2>Register</h2>
+    <form id="signUpForm">
+      <div class="form-group">
+        <label for="signup-username">Username</label>
+        <input type="text" id="signup-username" placeholder="Choose a username" required />
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="signup-phone">Phone Number (optional)</label>
+        <input type="tel" id="signup-phone" placeholder="Enter your phone number" />
+      </div>
+      <div class="form-group">
+        <label for="signup-idproof">ID Proof (optional)</label>
+        <input type="file" id="signup-idproof" accept="image/*,application/pdf" />
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" placeholder="Create a password" required />
+      </div>
+      <div class="bottom-buttons">
+        <button type="submit">Register</button>
+        <button type="button" id="toSignIn">Sign In</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="footer-info">
+    Contact us at: <strong>wanderwaybot@gmail.com</strong>
+  </div>
+</div>
+
+<!-- ✅ Popup for messages -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h3 id="popup-title">Popup Title</h3>
+    <p id="popup-message">Popup Message</p>
+    <button id="popup-ok">OK</button>
+  </div>
+</div>
+
+<script>
+  // Switch forms
+  const signInBtn = document.getElementById('toSignIn');
+  const signUpBtn = document.getElementById('toSignUp');
+  const signInSection = document.getElementById('signInSection');
+  const signUpSection = document.getElementById('signUpSection');
+
+  function showSignIn() {
+    signInSection.classList.remove('hidden');
+    signUpSection.classList.add('hidden');
+  }
+
+  function showSignUp() {
+    signUpSection.classList.remove('hidden');
+    signInSection.classList.add('hidden');
+  }
+
+  document.getElementById('toSignIn').addEventListener('click', showSignIn);
+  document.getElementById('toSignUp').addEventListener('click', showSignUp);
+
+  // Register (Sign Up)
+  document.getElementById("signUpForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("signup-username").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const phone = document.getElementById("signup-phone").value.trim();
+    const idProofFile = document.getElementById("signup-idproof").files[0];
+    const password = document.getElementById("signup-password").value;
+
+    let idProofInfo = idProofFile ? idProofFile.name : "";
+
+    const res = await fetch("http://localhost:5000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, phone, idProof: idProofInfo, password })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      showPopup("Registration Successful 🎉", data.message, () => {
+        showSignIn();
+        document.getElementById("signUpForm").reset();
+      });
+    } else {
+      showPopup("Error ❌", data.error);
+    }
+  });
+
+  // Login (Sign In)
+  document.getElementById("signInForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("signin-username").value.trim();
+    const password = document.getElementById("signin-password").value;
+
+    const res = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      // ✅ Store logged-in user info
+      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+
+      // ✅ Show popup and redirect
+      showPopup(`Welcome ${data.user.username}!`, "Login successful 🎉", () => {
+        window.location.href = "dashboard.html";
+      });
+    } else {
+      showPopup("Login Failed ❌", data.error);
+    }
+  });
+
+  // ✅ Popup Function
+  function showPopup(title, message, callback) {
+    const popup = document.getElementById("popup");
+    const popupTitle = document.getElementById("popup-title");
+    const popupMsg = document.getElementById("popup-message");
+    const popupOk = document.getElementById("popup-ok");
+
+    popupTitle.textContent = title;
+    popupMsg.textContent = message;
+    popup.style.display = "flex";
+
+    popupOk.onclick = () => {
+      popup.style.display = "none";
+      if (callback) callback();
+    };
+  }
+</script>
+</body>
+</html>
